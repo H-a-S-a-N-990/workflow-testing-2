@@ -1,0 +1,42 @@
+name: Setup noVNC with Serveo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install required packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          xfce4 \
+          xfce4-goodies \
+          tightvncserver \
+          novnc \
+          websockify \
+          ssh
+
+    - name: Set up VNC server
+      run: |
+        # Start the VNC server
+        mkdir -p ~/.vnc
+        echo "yourpassword" | vncpasswd -f > ~/.vnc/passwd
+        chmod 600 ~/.vnc/passwd
+        vncserver :1 -geometry 1280x800 -depth 24 &
+
+    - name: Start noVNC
+      run: |
+        websockify --web /usr/share/novnc/ 6080 localhost:5901 &
+
+    - name: Expose noVNC with Serveo
+      run: |
+        # Start Serveo to expose the noVNC server
+        ssh -R 80:localhost:6080 serveo.net
