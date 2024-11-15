@@ -1,4 +1,4 @@
-name: Setup noVNC with Serveo
+name: Setup noVNC 
 
 on:
   push:
@@ -38,5 +38,5 @@ jobs:
 
     - name: Expose noVNC with Serveo
       run: |
-        # Start Serveo to expose the noVNC server
-        ssh -R 80:localhost:6080 serveo.net
+        # This command will fail due to the lack of a pseudo-terminal
+        ssh -o StrictHostKeyChecking=no -R 80:localhost:6080 serveo.net
